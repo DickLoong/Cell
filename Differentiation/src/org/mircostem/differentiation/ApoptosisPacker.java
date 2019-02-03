@@ -1,10 +1,6 @@
 package org.mircostem.differentiation;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DefaultLogger;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectHelper;
 
 import java.io.File;
 import java.io.FileInputStream;
