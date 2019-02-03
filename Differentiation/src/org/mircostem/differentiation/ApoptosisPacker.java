@@ -64,6 +64,9 @@ public class ApoptosisPacker {
                 boolean isScanned = false;
                 for (File sourceFile : scanningFileList) {
                     String parentPath = sourceFile.getParent();
+                    if(!StringUtils.contains(stemPackage,parentPath)){
+                        continue;
+                    }
                     if (StringUtils.equals(stemPackage, parentPath)) {
                         isScanned = true;
                         String actualFilePath = sourceFile.getPath();
