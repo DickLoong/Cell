@@ -1,39 +1,36 @@
 package org.mircostem.bootstrap;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.mircostem.loader.ModuleClassLoader;
 import org.mircostem.loader.RouterClassLoader;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 public class BootstrapManager {
     private static RouterClassLoader routerClassLoader = new RouterClassLoader();
     private static Map<String, ModuleClassLoader> moduleClassLoaderMap = new ConcurrentHashMap<>();
-    private static Map<String,Object> serviceMap = new ConcurrentHashMap<>();
-    private static Map<String,Long> newInstanceLock = new ConcurrentHashMap<>();
+    private static Map<String, Object> serviceMap = new ConcurrentHashMap<>();
+    private static Map<String, Long> newInstanceLock = new ConcurrentHashMap<>();
     private static Set<String> controllingServiceImplPackageSet = new HashSet<>();
-    static{
-        String routerServiceImplPackageName = System.getProperty("RouterServiceImplPackageName");
-        routerClassLoader.setRouterServiceImplPackage(routerServiceImplPackageName);
-        String controllingServiceImplPackageSetJsonString = System.getProperty("RouterServiceImplPackageName");
-        JSONArray objects = JSONObject.parseArray(controllingServiceImplPackageSetJsonString);
-        List<String> strings = objects.toJavaList(String.class);
-        Set<String> collect = strings.stream().collect(Collectors.toSet());
-        controllingServiceImplPackageSet.addAll(collect);
+
+    public static void init(String routerServiceImplPackageName, Set<String> ControllingRouterServiceImplPackageName) {
+        try {
+            routerClassLoader.setRouterServiceImplPackage(routerServiceImplPackageName);
+            Set<String> collect = ControllingRouterServiceImplPackageName;
+            controllingServiceImplPackageSet.addAll(collect);
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
     }
 
-    public static <T> T getService(Class<T> serviceClass){
+    public static <T> T getService(Class<T> serviceClass) {
         String clazzName = serviceClass.getName();
-        if(!serviceMap.containsKey(clazzName)) {
+        if (!serviceMap.containsKey(clazzName)) {
             ModuleClassLoader moduleClassLoader = null;
             String routerServiceImplPackage = routerClassLoader.getRouterServiceImplPackage();
             if (StringUtils.contains(clazzName, routerServiceImplPackage)) {
@@ -48,6 +45,9 @@ public class BootstrapManager {
                         moduleClassLoader = moduleClassLoaderMap.get(controllingServiceImplPackage);
                         break;
                     }
+                }
+                if(moduleClassLoader == null){
+                    return null;
                 }
                 try {
                     if (!newInstanceLock.containsKey(clazzName)) {
@@ -74,6 +74,6 @@ public class BootstrapManager {
             }
         }
         Object o = serviceMap.get(clazzName);
-        return (T)o;
+        return (T) o;
     }
 }

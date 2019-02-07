@@ -8,12 +8,25 @@ public class RouterClassLoader  extends ClassLoader{
     @Override
     protected Class<?> findClass(String className) throws ClassNotFoundException {
         if(StringUtils.contains(className,routerServiceImplPackage)) {
-            throw new ClassNotFoundException();
+            return null;
         }else{
             return super.findClass(className);
         }
     }
 
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return loadClass(name,false);
+    }
+
+    @Override
+    protected Class<?> loadClass(String className, boolean resolve) throws ClassNotFoundException {
+        if(StringUtils.contains(className,routerServiceImplPackage)) {
+            return null;
+        }else{
+            return super.findClass(className);
+        }
+    }
 
     public RouterClassLoader() {
         super(ClassLoader.getSystemClassLoader());
