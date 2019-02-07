@@ -11,5 +11,7 @@ public class TestServiceImpl implements ITestService {
         }catch (ClassNotFoundException cnfe){
             cnfe.printStackTrace();
         }
+        org.mircostem.test.router.service.TestA.ITestService testService = new org.mircostem.test.router.impl.TestA.TestServiceImpl();
+        testService.echoTest();
     }
 }

@@ -205,7 +205,7 @@ public class ModuleClassLoader extends ClassLoader {
         {
             String locationPath = this.getClass().getResource("/").getPath();
             String replacingClassName = StringUtils.replace(name,".", "/");
-            String classFileLocationPath = locationPath + replacingClassName + ".class";
+            String classFileLocationPath = locationPath + replacingClassName + CLASS_FILE_SUFFIX;
             byte[] cLassBytes = null;
             try (FileInputStream in =new FileInputStream(new File(classFileLocationPath));){
                 //当文件没有结束时，每次读取一个字节显示
